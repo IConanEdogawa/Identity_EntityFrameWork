@@ -3,6 +3,7 @@ using Identity_EntityFrameWork.Models.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -12,7 +13,9 @@ namespace Identity_EntityFrameWork.Services
     public class UserService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly JWTTokenService _jWTTokenService;
 
+   
         public UserService(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
@@ -76,14 +79,15 @@ namespace Identity_EntityFrameWork.Services
             return result;
         }
 
-        public async Task<ActionResult<string>> LoginService(LoginDTO loginDto)
+        public async Task<ActionResult<JWTToken>> LoginService(LoginDTO loginDto)
         {
+            JWTToken token = null;
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
             if (user is null)
             {
                 // User's email is not found
-                return "User's email is not found!";
+                return null;
             }
 
             var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginDto.Password);
@@ -91,13 +95,15 @@ namespace Identity_EntityFrameWork.Services
             if (!isPasswordCorrect)
             {
                 // Password is not correct
-                return "Password is not correct!";
+                return null;
             }
 
             // Authentication successful
-            // Here you can generate and return a JWT token or perform any other necessary actions
-            // Man hali JWT token qilmadim shunga yozmiman hozircha keyinroq qo`shaman.
-            return "Login successful!";
+            var jwtService = new JWTTokenService("conanedogawa", "detective");
+            token = jwtService.GenerateToken(user.Id, user.UserName);
+
+
+            return token;
         }
 
         public async Task<AppUser> GetUserByIdService(Guid Id)
