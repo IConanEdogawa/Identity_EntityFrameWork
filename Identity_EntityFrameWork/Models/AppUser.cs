@@ -11,5 +11,6 @@ namespace Identity_EntityFrameWork.Models
         public DateTimeOffset UpdatedDate { get; set; }
         public DateTimeOffset DeletedDate { get; set; }
         public bool IsDeleted { get; set; } = false;
-    }
+        public List<Role> Roles { get; set; } = new List<Role>();
+    } 
 }

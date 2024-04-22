@@ -1,5 +1,7 @@
 using Identity_EntityFrameWork.DbContext;
 using Identity_EntityFrameWork.Models;
+using Identity_EntityFrameWork.Services;
+using Identity_EntityFrameWork.Services.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<ApplicitionIdentityDbContext>(options =>
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicitionIdentityDbContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddScoped<IUserService ,UserService>();
+builder.Services.AddScoped<JWTTokenService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

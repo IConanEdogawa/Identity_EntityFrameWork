@@ -1,5 +1,6 @@
 ﻿using Identity_EntityFrameWork.Models;
 using Identity_EntityFrameWork.Models.DTOs;
+using Identity_EntityFrameWork.Services.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using System.Web.Mvc;
 
 namespace Identity_EntityFrameWork.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly JWTTokenService _jWTTokenService;
@@ -79,7 +80,8 @@ namespace Identity_EntityFrameWork.Services
             return result;
         }
 
-        public async Task<ActionResult<JWTToken>> LoginService(LoginDTO loginDto)
+
+        public async Task<JWTToken> LoginService(LoginDTO loginDto)
         {
             JWTToken token = null;
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -99,12 +101,15 @@ namespace Identity_EntityFrameWork.Services
             }
 
             // Authentication successful
-            var jwtService = new JWTTokenService("conanedogawa", "detective");
-            token = jwtService.GenerateToken(user.Id, user.UserName);
-
+            var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json") 
+                        .Build();
+            var jwtService = new JWTTokenService(configuration);
+            token = jwtService.GenerateToken(user);
 
             return token;
         }
+
 
         public async Task<AppUser> GetUserByIdService(Guid Id)
         {
@@ -383,6 +388,8 @@ namespace Identity_EntityFrameWork.Services
 
             return false;
         }
+
+
 
 
 

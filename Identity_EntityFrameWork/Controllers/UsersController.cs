@@ -1,6 +1,7 @@
 ﻿using Identity_EntityFrameWork.Models;
 using Identity_EntityFrameWork.Models.DTOs;
 using Identity_EntityFrameWork.Services;
+using Identity_EntityFrameWork.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Identity_EntityFrameWork.Controllers
@@ -10,9 +11,9 @@ namespace Identity_EntityFrameWork.Controllers
     public class UsersController : ControllerBase
     {
 
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UsersController(UserService userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
